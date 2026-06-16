@@ -1,0 +1,211 @@
+{
+  "generated_at": "2026-06-16 14:44",
+  "total_patients": 99493,
+  "readmission_rate": 11.2,
+  "avg_medications": 16.0,
+  "avg_hospital_days": 4.4,
+  "readmission_breakdown": [
+    {
+      "status": "NO",
+      "count": 53317
+    },
+    {
+      "status": ">30",
+      "count": 35007
+    },
+    {
+      "status": "<30",
+      "count": 11169
+    }
+  ],
+  "readmission_by_age": [
+    {
+      "age_group": "Young (0-30)",
+      "readmission_rate": 11.2
+    },
+    {
+      "age_group": "Middle (30-50)",
+      "readmission_rate": 10.9
+    },
+    {
+      "age_group": "Senior (50-70)",
+      "readmission_rate": 10.6
+    },
+    {
+      "age_group": "Elderly (70+)",
+      "readmission_rate": 11.9
+    }
+  ],
+  "medications_trend": [
+    {
+      "num_medications": 1,
+      "readmission_rate": 4.4
+    },
+    {
+      "num_medications": 2,
+      "readmission_rate": 8.5
+    },
+    {
+      "num_medications": 3,
+      "readmission_rate": 7.1
+    },
+    {
+      "num_medications": 4,
+      "readmission_rate": 7.8
+    },
+    {
+      "num_medications": 5,
+      "readmission_rate": 7.6
+    },
+    {
+      "num_medications": 6,
+      "readmission_rate": 8.5
+    },
+    {
+      "num_medications": 7,
+      "readmission_rate": 8.9
+    },
+    {
+      "num_medications": 8,
+      "readmission_rate": 9.5
+    },
+    {
+      "num_medications": 9,
+      "readmission_rate": 9.9
+    },
+    {
+      "num_medications": 10,
+      "readmission_rate": 10.1
+    },
+    {
+      "num_medications": 11,
+      "readmission_rate": 10.4
+    },
+    {
+      "num_medications": 12,
+      "readmission_rate": 10.8
+    },
+    {
+      "num_medications": 13,
+      "readmission_rate": 10.9
+    },
+    {
+      "num_medications": 14,
+      "readmission_rate": 10.8
+    },
+    {
+      "num_medications": 15,
+      "readmission_rate": 11.7
+    },
+    {
+      "num_medications": 16,
+      "readmission_rate": 11.6
+    },
+    {
+      "num_medications": 17,
+      "readmission_rate": 12.2
+    },
+    {
+      "num_medications": 18,
+      "readmission_rate": 12.3
+    },
+    {
+      "num_medications": 19,
+      "readmission_rate": 12.4
+    },
+    {
+      "num_medications": 20,
+      "readmission_rate": 13.2
+    },
+    {
+      "num_medications": 21,
+      "readmission_rate": 12.9
+    },
+    {
+      "num_medications": 22,
+      "readmission_rate": 13.5
+    },
+    {
+      "num_medications": 23,
+      "readmission_rate": 12.9
+    },
+    {
+      "num_medications": 24,
+      "readmission_rate": 13.9
+    },
+    {
+      "num_medications": 25,
+      "readmission_rate": 12.0
+    },
+    {
+      "num_medications": 26,
+      "readmission_rate": 12.9
+    },
+    {
+      "num_medications": 27,
+      "readmission_rate": 12.3
+    },
+    {
+      "num_medications": 28,
+      "readmission_rate": 12.0
+    },
+    {
+      "num_medications": 29,
+      "readmission_rate": 14.5
+    },
+    {
+      "num_medications": 30,
+      "readmission_rate": 11.9
+    }
+  ],
+  "ab_test": {
+    "group_a_rate": 11.9,
+    "group_b_rate": 10.6,
+    "group_a_size": 45911,
+    "group_b_size": 53582,
+    "chi2": 38.8926,
+    "p_value": 0.0,
+    "significant": true
+  },
+  "ml_model": {
+    "accuracy": 67.0,
+    "true_negatives": 12317,
+    "false_positives": 5407,
+    "false_negatives": 1153,
+    "true_positives": 1022,
+    "feature_importance": [
+      {
+        "feature": "number_inpatient",
+        "importance": 0.2974724093153963
+      },
+      {
+        "feature": "diabetesMed",
+        "importance": 0.2000847600660896
+      },
+      {
+        "feature": "number_emergency",
+        "importance": 0.06147366620994978
+      },
+      {
+        "feature": "number_diagnoses",
+        "importance": 0.04572049894428396
+      },
+      {
+        "feature": "time_in_hospital",
+        "importance": 0.028037477068985763
+      },
+      {
+        "feature": "num_procedures",
+        "importance": 0.024513332158543014
+      },
+      {
+        "feature": "gender",
+        "importance": 0.019519533889055998
+      },
+      {
+        "feature": "insulin",
+        "importance": 0.018649058425154907
+      }
+    ]
+  }
+}

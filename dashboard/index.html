@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Healthcare Analytics — Hospital Readmission</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f4f8;
+            color: #1a2332;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a3a5c, #2e86c1);
+            color: white;
+            padding: 2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title { font-family: 'Inter', sans-serif; }
+        .header-title h1 { font-size: 1.8rem; font-weight: 700; }
+        .header-title p  { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+        .header-meta     { text-align: right; font-size: 0.8rem; opacity: 0.75; }
+
+        main { padding: 2rem 3rem; max-width: 1400px; margin: 0 auto; }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--color);
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a2332;
+        }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+
+        /* Charts */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .chart-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a3a5c;
+            margin-bottom: 0.3rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.72rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+
+        /* A/B Test Card */
+        .ab-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .ab-groups {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ab-group {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .ab-group.a { background: #e8f4fd; border: 2px solid #2e86c1; }
+        .ab-group.b { background: #eafaf1; border: 2px solid #27ae60; }
+
+        .ab-group h3 { font-size: 0.85rem; color: #555; margin-bottom: 0.5rem; }
+        .ab-group .rate {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .ab-group.a .rate { color: #2e86c1; }
+        .ab-group.b .rate { color: #27ae60; }
+
+        .ab-group p { font-size: 0.75rem; color: #777; margin-top: 0.3rem; }
+
+        .ab-result {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .ab-result.significant { background: #d4edda; border-color: #28a745; }
+
+        /* ML Card */
+        .ml-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .ml-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ml-metric {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .ml-metric .val {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a3a5c;
+        }
+
+        .ml-metric .lbl {
+            font-size: 0.72rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.75rem;
+            color: #888;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            main { padding: 1rem; }
+            .kpi-grid { grid-template-columns: repeat(2,1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .ml-metrics { grid-template-columns: repeat(2,1fr); }
+            header { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <h1>🏥 Hospital Readmission Analytics</h1>
+        <p>Diabetic Patient 30-Day Readmission Prediction &amp; A/B Testing</p>
+    </div>
+    <div class="header-meta">
+        <div>130 US Hospitals · 1999–2008</div>
+        <div id="timestamp">—</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card" style="--color:#2e86c1">
+            <div class="kpi-label">Total Patients</div>
+            <div class="kpi-value" id="kpi-total">—</div>
+            <div class="kpi-sub">diabetic hospital encounters</div>
+        </div>
+        <div class="kpi-card" style="--color:#e74c3c">
+            <div class="kpi-label">30-Day Readmission Rate</div>
+            <div class="kpi-value" id="kpi-rate">—</div>
+            <div class="kpi-sub">patients readmitted within 30 days</div>
+        </div>
+        <div class="kpi-card" style="--color:#f39c12">
+            <div class="kpi-label">Avg Medications</div>
+            <div class="kpi-value" id="kpi-meds">—</div>
+            <div class="kpi-sub">per patient encounter</div>
+        </div>
+        <div class="kpi-card" style="--color:#27ae60">
+            <div class="kpi-label">Avg Hospital Stay</div>
+            <div class="kpi-value" id="kpi-days">—</div>
+            <div class="kpi-sub">days per encounter</div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="chart-title">Readmission Status Distribution</div>
+            <div class="chart-subtitle">No readmission vs &lt;30 days vs &gt;30 days</div>
+            <canvas id="readmitChart" height="200"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">30-Day Readmission Rate by Age Group</div>
+            <div class="chart-subtitle">Which age groups are highest risk?</div>
+            <canvas id="ageChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- A/B Test -->
+    <div class="ab-card">
+        <div class="chart-title">🧪 A/B Test: Does Medication Change Reduce Readmission?</div>
+        <div class="chart-subtitle">Chi-square statistical significance test</div>
+        <div class="ab-groups">
+            <div class="ab-group a">
+                <h3>Group A — Medication CHANGED</h3>
+                <div class="rate" id="ab-rate-a">—</div>
+                <p id="ab-size-a">— patients</p>
+            </div>
+            <div class="ab-group b">
+                <h3>Group B — Medication NOT Changed</h3>
+                <div class="rate" id="ab-rate-b">—</div>
+                <p id="ab-size-b">— patients</p>
+            </div>
+        </div>
+        <div class="ab-result significant" id="ab-conclusion">Loading...</div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="chart-title">Top Predictors of Readmission</div>
+            <div class="chart-subtitle">Feature importance from ML model</div>
+            <canvas id="featureChart" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Medications vs Readmission Rate</div>
+            <div class="chart-subtitle">Does more medication = higher risk?</div>
+            <canvas id="medsChart" height="220"></canvas>
+        </div>
+    </div>
+
+    <!-- ML Model -->
+    <div class="ml-card">
+        <div class="chart-title">🤖 Machine Learning Model Performance</div>
+        <div class="chart-subtitle">Logistic regression · class_weight=balanced · 80/20 train/test split</div>
+        <div class="ml-metrics">
+            <div class="ml-metric">
+                <div class="val" id="ml-accuracy">—</div>
+                <div class="lbl">Model Accuracy</div>
+            </div>
+            <div class="ml-metric">
+                <div class="val" id="ml-tp">—</div>
+                <div class="lbl">Readmissions Caught</div>
+            </div>
+            <div class="ml-metric">
+                <div class="val" id="ml-fn">—</div>
+                <div class="lbl">Missed Readmissions</div>
+            </div>
+            <div class="ml-metric">
+                <div class="val" id="ml-tn">—</div>
+                <div class="lbl">Correctly Safe</div>
+            </div>
+        </div>
+        <canvas id="confusionChart" height="100"></canvas>
+    </div>
+
+</main>
+
+<footer>
+    Healthcare Analytics · Diabetic Patient Readmission Prediction ·
+    Python · Pandas · Scikit-learn · A/B Testing · Chart.js
+</footer>
+
+<script>
+// ── Load data.json ────────────────────────────────────────
+fetch('data.json')
+    .then(r => r.json())
+    .then(DATA => {
+
+    // Timestamp
+    document.getElementById('timestamp').textContent = 'Generated: ' + DATA.generated_at;
+
+    // KPIs
+    document.getElementById('kpi-total').textContent = DATA.total_patients.toLocaleString();
+    document.getElementById('kpi-rate').textContent  = DATA.readmission_rate + '%';
+    document.getElementById('kpi-meds').textContent  = DATA.avg_medications;
+    document.getElementById('kpi-days').textContent  = DATA.avg_hospital_days + ' days';
+
+    // Chart defaults
+    Chart.defaults.font.family = 'DM Sans';
+    Chart.defaults.color = '#666';
+
+    const BLUE   = '#2e86c1';
+    const RED    = '#e74c3c';
+    const GREEN  = '#27ae60';
+    const ORANGE = '#f39c12';
+    const PURPLE = '#8e44ad';
+
+    // ── Readmission Doughnut ──────────────────────────────
+    const rd = DATA.readmission_breakdown;
+    const rdMap = {};
+    rd.forEach(r => rdMap[r.status] = r.count);
+
+    new Chart(document.getElementById('readmitChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['No Readmission', 'Readmitted >30 days', 'Readmitted <30 days'],
+            datasets: [{
+                data: [rdMap['NO']||0, rdMap['>30']||0, rdMap['<30']||0],
+                backgroundColor: [GREEN, ORANGE, RED],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            cutout: '60%',
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // ── Age Group Bar Chart ───────────────────────────────
+    const age = DATA.readmission_by_age;
+    new Chart(document.getElementById('ageChart'), {
+        type: 'bar',
+        data: {
+            labels: age.map(d => d.age_group),
+            datasets: [{
+                label: 'Readmission Rate %',
+                data: age.map(d => d.readmission_rate),
+                backgroundColor: [GREEN, BLUE, ORANGE, RED],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: v => v + '%' }
+                }
+            }
+        }
+    });
+
+    // ── A/B Test ──────────────────────────────────────────
+    const ab = DATA.ab_test;
+    document.getElementById('ab-rate-a').textContent = ab.group_a_rate + '%';
+    document.getElementById('ab-rate-b').textContent = ab.group_b_rate + '%';
+    document.getElementById('ab-size-a').textContent = ab.group_a_size.toLocaleString() + ' patients';
+    document.getElementById('ab-size-b').textContent = ab.group_b_size.toLocaleString() + ' patients';
+    document.getElementById('ab-conclusion').textContent =
+        ab.significant
+        ? `✅ STATISTICALLY SIGNIFICANT (p-value = ${ab.p_value}) — The difference is REAL, not random chance. Changing medication increases readmission by ${(ab.group_a_rate - ab.group_b_rate).toFixed(1)}%`
+        : `❌ NOT significant (p-value = ${ab.p_value}) — Difference could be random`;
+
+    // ── Feature Importance ────────────────────────────────
+    const fi = DATA.ml_model.feature_importance;
+    new Chart(document.getElementById('featureChart'), {
+        type: 'bar',
+        data: {
+            labels: fi.map(d => d.feature),
+            datasets: [{
+                data: fi.map(d => d.importance),
+                backgroundColor: BLUE,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+
+    // ── Medications Trend ─────────────────────────────────
+    const med = DATA.medications_trend.slice(0, 25);
+    new Chart(document.getElementById('medsChart'), {
+        type: 'line',
+        data: {
+            labels: med.map(d => d.num_medications),
+            datasets: [{
+                label: 'Readmission Rate %',
+                data: med.map(d => d.readmission_rate),
+                borderColor: RED,
+                backgroundColor: 'rgba(231,76,60,0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { title: { display: true, text: 'Number of Medications' } },
+                y: { ticks: { callback: v => v + '%' } }
+            }
+        }
+    });
+
+    // ── ML Metrics ────────────────────────────────────────
+    const ml = DATA.ml_model;
+    document.getElementById('ml-accuracy').textContent = ml.accuracy + '%';
+    document.getElementById('ml-tp').textContent = ml.true_positives.toLocaleString();
+    document.getElementById('ml-fn').textContent = ml.false_negatives.toLocaleString();
+    document.getElementById('ml-tn').textContent = ml.true_negatives.toLocaleString();
+
+    // Confusion Matrix Bar
+    new Chart(document.getElementById('confusionChart'), {
+        type: 'bar',
+        data: {
+            labels: ['True Negatives\n(Correctly Safe)', 'False Positives\n(Wrong Alarm)',
+                     'False Negatives\n(Missed)', 'True Positives\n(Caught!)'],
+            datasets: [{
+                data: [ml.true_negatives, ml.false_positives,
+                       ml.false_negatives, ml.true_positives],
+                backgroundColor: [GREEN, ORANGE, RED, BLUE],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+}).catch(err => {
+    document.body.innerHTML = '<div style="padding:2rem;color:red">Error loading data.json: ' + err + '</div>';
+});
+</script>
+</body>
+</html>
