@@ -1,0 +1,8 @@
+# Dataset - download from Kaggle
+data/diabetic_data.csv
+
+# Mac system files
+.DS_Store
+data/.DS_Store
+__pycache__/
+*.pyc
