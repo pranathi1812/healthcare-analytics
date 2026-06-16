@@ -12,7 +12,7 @@ for patient risk stratification.
 ## 🎯 Project Overview
 
 Under the US Hospital Readmissions Reduction Program (HRRP), Medicare 
-penalizes hospitals for high 30-day readmission rates — costing the 
+penalizes hospitals for high 30-day readmission rates costing the 
 industry billions annually. This project identifies high-risk patients 
 before discharge using real clinical data from 130 US hospitals (1999–2008).
 
@@ -40,7 +40,7 @@ before discharge using real clinical data from 130 US hospitals (1999–2008).
 **Chi-square test → p-value ≈ 0 → Statistically significant**
 
 Counterintuitive finding: medication changes correlate with higher 
-readmission — suggesting they're a marker of patient complexity, 
+readmission suggesting they're a marker of patient complexity, 
 not a cause of readmission.
 
 ---
@@ -59,7 +59,7 @@ not a cause of readmission.
 
 Initial model achieved 89% accuracy but only caught 35 readmissions 
 (predicting "safe" for almost everyone). Adding class_weight=balanced 
-improved recall from 2% to 47% — making it clinically useful.
+improved recall from 2% to 47% making it clinically useful.
 
 ---
 
@@ -96,9 +96,9 @@ cd dashboard && python3 -m http.server 8000
 ## 🎓 Skills Demonstrated
 
 - A/B Testing with chi-square statistical significance testing
-- Machine learning — logistic regression with class imbalance handling
-- Healthcare domain knowledge — clinical data, readmission metrics, HRRP
-- End-to-end data pipeline — Extract, Transform, Analyze, Visualize
+- Machine learning - logistic regression with class imbalance handling
+- Healthcare domain knowledge - clinical data, readmission metrics, HRRP
+- End-to-end data pipeline - Extract, Transform, Analyze, Visualize
 - Feature engineering and model evaluation (recall, confusion matrix)
 - Interactive dashboard with Chart.js
 
